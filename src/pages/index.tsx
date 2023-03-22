@@ -1,11 +1,32 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import { Inter } from "next/font/google";
+import styles from "@/styles/Home.module.css";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
+import Header from "../components/Header";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
+
+export const fetcher = async (resource: string, init: any) => {
+  const res = await fetch(resource, init);
+  if (!res.ok) {
+    console.error(`Fetch to ${resource} failed: ${res.statusText}`);
+    return { error: res.statusText };
+  }
+  return res.json();
+};
 
 export default function Home() {
+  const [canLoad, setCanLoad] = useState(false);
+  const { data } = useSWR(canLoad ? "/api/test/hello" : null, fetcher);
+
+  useEffect(() => {
+    setTimeout(() => setCanLoad(true), 1);
+  }, []);
+
+  console.log("request data", data);
+
   return (
     <>
       <Head>
@@ -15,6 +36,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
+        <Header />
         <div className={styles.description}>
           <p>
             Get started by editing&nbsp;
@@ -26,7 +48,7 @@ export default function Home() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              By{' '}
+              By{" "}
               <Image
                 src="/vercel.svg"
                 alt="Vercel Logo"
@@ -119,5 +141,5 @@ export default function Home() {
         </div>
       </main>
     </>
-  )
+  );
 }
