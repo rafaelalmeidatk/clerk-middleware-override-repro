@@ -4,10 +4,13 @@ function Header() {
   const { signIn } = useSignIn();
 
   const handleGoogleLogin = async () => {
+    const redirectUrl =
+      process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+
     await signIn?.authenticateWithRedirect({
       strategy: "oauth_google",
-      redirectUrl: "http://localhost:3000",
-      redirectUrlComplete: "http://localhost:3000",
+      redirectUrl,
+      redirectUrlComplete: redirectUrl,
     });
   };
 
